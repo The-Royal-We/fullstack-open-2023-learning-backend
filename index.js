@@ -57,7 +57,7 @@ app.post("/api/persons", (request, response) => {
 
   if (persons.find((p) => p.name === name)) {
     response.status(400).json({
-      error: `${name} already exists in phonebook`,
+      error: `name must be unique`,
     });
   }
 
