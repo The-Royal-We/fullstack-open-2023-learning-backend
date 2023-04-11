@@ -1,7 +1,9 @@
-const { response, request } = require("express");
+require("dotenv").config();
+
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
+const Contact = require("./model/contact");
 
 const app = express();
 
@@ -46,13 +48,15 @@ let persons = [
   },
 ];
 
-app.get("/", (request, response) => {
+app.get("/", (_request, response) => {
   console.log("message received");
   response.send("<h1>Hello, World</h1>");
 });
 
 app.get("/api/persons", (_request, response) => {
-  response.json(persons);
+  Contact.find({}).then((personData) => {
+    response.json(personData);
+  });
 });
 
 app.post("/api/persons", (request, response) => {
