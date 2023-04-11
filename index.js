@@ -25,29 +25,6 @@ app.use(express.static("build"));
 
 app.use(cors());
 
-let persons = [
-  {
-    id: 1,
-    name: "Arto Hellas",
-    number: "040-123456",
-  },
-  {
-    id: 2,
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: 3,
-    name: "Dan Abramov",
-    number: "12-43-234345",
-  },
-  {
-    id: 4,
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-  },
-];
-
 app.get("/", (_request, response) => {
   console.log("message received");
   response.send("<h1>Hello, World</h1>");
@@ -75,23 +52,20 @@ app.post("/api/persons", (request, response) => {
     });
   }
 
-  const { name } = body;
+  const { name, number } = body;
 
-  if (persons.find((p) => p.name === name)) {
-    response.status(400).json({
-      error: `name must be unique`,
-    });
-  }
+  // if (Contact.exists({ name })) {
+  //   response.status(400).json({
+  //     error: `name must be unique`,
+  //   });
+  // }
 
-  const newPerson = {
-    id: generateId(),
+  const newPerson = new Contact({
     name,
-    number: body.number,
-  };
+    number,
+  });
 
-  persons = persons.concat(newPerson);
-
-  response.json(newPerson);
+  newPerson.save().then((newPersonData) => response.json(newPersonData));
 });
 
 app.get("/api/persons/:id", (request, response) => {
