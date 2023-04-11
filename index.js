@@ -86,7 +86,7 @@ app.post("/api/persons", (request, response) => {
 
   persons = persons.concat(newPerson);
 
-  response.status(204).end();
+  response.json(newPerson);
 });
 
 app.get("/api/persons/:id", (request, response) => {
