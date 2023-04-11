@@ -37,6 +37,19 @@ app.get("/api/persons", (_request, response) => {
   response.json(persons);
 });
 
+app.post("/api/persons", (request, response) => {
+  const { body } = request;
+  const newPerson = {
+    id: generateId(),
+    name: body.name,
+    number: body.number,
+  };
+
+  persons = persons.concat(newPerson);
+
+  response.status(204).end();
+});
+
 app.get("/api/persons/:id", (request, response) => {
   const id = Number(request.params.id);
   const person = persons.find((p) => p.id === id);
@@ -66,3 +79,10 @@ PORT = 3001;
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
 });
+
+const generateId = () => {
+  const min = 100;
+  const max = Number.MAX_SAFE_INTEGER;
+  const id = Math.floor(Math.random() * (max - min + 1) + min); // don't like using this for id's
+  return id;
+};
