@@ -39,9 +39,31 @@ app.get("/api/persons", (_request, response) => {
 
 app.post("/api/persons", (request, response) => {
   const { body } = request;
+  if (!body || Object.keys(body).length === 0) {
+    response.status(400).json({
+      error: "body is missing",
+    });
+  } else if (!body.name) {
+    response.status(400).json({
+      error: "name is missing",
+    });
+  } else if (!body.number) {
+    response.status(400).json({
+      error: "number is missing",
+    });
+  }
+
+  const { name } = body;
+
+  if (persons.find((p) => p.name === name)) {
+    response.status(400).json({
+      error: `${name} already exists in phonebook`,
+    });
+  }
+
   const newPerson = {
     id: generateId(),
-    name: body.name,
+    name,
     number: body.number,
   };
 
