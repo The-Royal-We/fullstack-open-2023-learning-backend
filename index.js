@@ -65,16 +65,15 @@ app.post("/api/persons", (request, response, next) => {
     .catch((err) => next(err));
 });
 
-app.get("/api/persons/:id", (request, response) => {
-  const id = Number(request.params.id);
-  const person = persons.find((p) => p.id === id);
-
-  if (person) {
-    response.json(person);
-  } else {
-    response.status(404).end();
-  }
+app.get("/api/persons/:id", (request, response, next) => {
+  Contact.findById(request.params.id)
+    .then((personData) => {
+      response.json(personData);
+    })
+    .catch((err) => next(err));
 });
+
+app.put("/api/persons/:id", (request, response, next) => {});
 
 app.delete("/api/persons/:id", (request, response, next) => {
   Contact.findByIdAndRemove(request.params.id)
