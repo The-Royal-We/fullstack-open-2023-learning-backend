@@ -73,7 +73,17 @@ app.get("/api/persons/:id", (request, response, next) => {
     .catch((err) => next(err));
 });
 
-app.put("/api/persons/:id", (request, response, next) => {});
+app.put("/api/persons/:id", (request, response, next) => {
+  const { name, number } = request.body;
+  const newPerson = {
+    name,
+    number,
+  };
+
+  Contact.findByIdAndUpdate(request.params.id, newPerson, { new: true })
+    .then((updatedPerson) => response.json(updatedPerson))
+    .catch((err) => next(err));
+});
 
 app.delete("/api/persons/:id", (request, response, next) => {
   Contact.findByIdAndRemove(request.params.id)
