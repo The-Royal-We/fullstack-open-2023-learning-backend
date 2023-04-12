@@ -36,7 +36,7 @@ app.get("/api/persons", (_request, response) => {
   });
 });
 
-app.post("/api/persons", (request, response) => {
+app.post("/api/persons", (request, response, next) => {
   const { body } = request;
   if (!body || Object.keys(body).length === 0) {
     response.status(400).json({
@@ -59,7 +59,10 @@ app.post("/api/persons", (request, response) => {
     number,
   });
 
-  newPerson.save().then((newPersonData) => response.json(newPersonData));
+  newPerson
+    .save()
+    .then((newPersonData) => response.json(newPersonData))
+    .catch((err) => next(err));
 });
 
 app.get("/api/persons/:id", (request, response) => {
@@ -91,7 +94,7 @@ app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
 });
 
-const errorHandler = (error, request, response, next) => {
+const errorHandler = (error, _request, response, next) => {
   console.error(error.message);
 
   if (error.name === "CastError") {
