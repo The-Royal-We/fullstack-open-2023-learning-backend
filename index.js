@@ -91,7 +91,7 @@ app.delete("/api/persons/:id", (request, response, next) => {
     .catch((err) => next(err));
 });
 
-app.get("/info", (_request, response, err) => {
+app.get("/info", (_request, response, next) => {
   Contact.count()
     .then((count) => {
       response.send(
