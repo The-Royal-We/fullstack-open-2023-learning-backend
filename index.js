@@ -54,12 +54,6 @@ app.post("/api/persons", (request, response) => {
 
   const { name, number } = body;
 
-  // if (Contact.exists({ name })) {
-  //   response.status(400).json({
-  //     error: `name must be unique`,
-  //   });
-  // }
-
   const newPerson = new Contact({
     name,
     number,
@@ -79,11 +73,10 @@ app.get("/api/persons/:id", (request, response) => {
   }
 });
 
-app.delete("/api/persons/:id", (request, response) => {
-  const id = Number(request.params.id);
-
-  persons = persons.filter((person) => person.id !== id);
-  response.status(204).end();
+app.delete("/api/persons/:id", (request, response, next) => {
+  Contact.findByIdAndRemove(request.params.id)
+    .then((_res) => response.status(204).end())
+    .catch((err) => next(err));
 });
 
 app.get("/info", (_request, response) => {
@@ -98,9 +91,14 @@ app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
 });
 
-const generateId = () => {
-  const min = 100;
-  const max = Number.MAX_SAFE_INTEGER;
-  const id = Math.floor(Math.random() * (max - min + 1) + min); // don't like using this for id's
-  return id;
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message);
+
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformatted id" });
+  }
+
+  next(error);
 };
+
+app.use(errorHandler);
