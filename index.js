@@ -81,10 +81,14 @@ app.delete("/api/persons/:id", (request, response, next) => {
     .catch((err) => next(err));
 });
 
-app.get("/info", (_request, response) => {
-  response.send(
-    `<p>Phonebook has info for ${persons.length} people </p><br/>${new Date()}`
-  );
+app.get("/info", (_request, response, err) => {
+  Contact.count()
+    .then((count) => {
+      response.send(
+        `<p>Phonebook has info for ${count} people </p><br/>${new Date()}`
+      );
+    })
+    .catch((err) => next(err));
 });
 
 const PORT = process.env.PORT || "8080";
