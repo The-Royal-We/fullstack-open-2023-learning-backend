@@ -7,10 +7,11 @@ const Contact = require("./model/contact");
 
 const app = express();
 
-const postBody = (req, _res) => {
+const postBody = (req) => {
   if (req.method === "POST") {
     return JSON.stringify(req.body);
   }
+  return null;
 };
 
 morgan.token("postBody", postBody);
@@ -90,7 +91,7 @@ app.put("/api/persons/:id", (request, response, next) => {
 
 app.delete("/api/persons/:id", (request, response, next) => {
   Contact.findByIdAndRemove(request.params.id)
-    .then((_res) => response.status(204).end())
+    .then(() => response.status(204).end())
     .catch((err) => next(err));
 });
 
@@ -115,11 +116,13 @@ const errorHandler = (error, _request, response, next) => {
 
   if (error.name === "CastError") {
     return response.status(400).send({ error: "malformatted id" });
-  } else if (error.name === "ValidationError") {
+  }
+  if (error.name === "ValidationError") {
     return response.status(400).send({ error: error.message });
   }
 
   next(error);
+  return null;
 };
 
 app.use(errorHandler);
